@@ -1,4 +1,5 @@
 import random
+
 n = random.randint(0,100)
 a = -1
 
