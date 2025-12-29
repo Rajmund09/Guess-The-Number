@@ -31,14 +31,12 @@ while True:
 
     print(f"🎉 You guessed the number {n} in {guesses} attempts")
 
-    # Best score logic
     if best_score is None or guesses < best_score:
         best_score = guesses
         print("🏆 New best score!")
 
     print(f"🥇 Best Score: {best_score} attempts")
 
-    # Replay option
     play_again = input("\nPlay again? (y/n): ").lower()
     if play_again != 'y':
         print("👋 Thanks for playing!")
