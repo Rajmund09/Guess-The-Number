@@ -1,145 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Guess The Number | Premium Web Edition</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="page-shell">
-      <div class="ambient ambient-a"></div>
-      <div class="ambient ambient-b"></div>
-      <div class="grid-overlay"></div>
 
-      <main class="app">
-        <section class="hero reveal">
-          <div class="hero-topbar">
-            <p class="eyebrow">Premium Guessing Studio</p>
-            <button id="new-round-top" class="ghost-button" type="button">
-              New Round
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess The Number | Premium Web Edition</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="page-shell">
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+    <div class="grid-overlay"></div>
+
+    <main class="app">
+      <section class="hero reveal">
+        <div class="hero-topbar">
+          <p class="eyebrow">Premium Guessing Studio</p>
+          <button id="new-round-top" class="ghost-button" type="button">
+            New Round
+          </button>
+        </div>
+
+        <header class="hero-header">
+          <p class="kicker">Precision game, redesigned for feel.</p>
+          <h1>Guess The Number</h1>
+          <p class="lede">
+            A calm, high-feedback guessing experience with smoother motion,
+            cleaner flow, and clearer guidance.
+          </p>
+        </header>
+
+        <section class="stats-grid">
+          <article class="stat-card">
+            <span>Best Score</span>
+            <strong id="best-score">-</strong>
+          </article>
+          <article class="stat-card">
+            <span>Rounds Won</span>
+            <strong id="rounds-won">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Attempts</span>
+            <strong id="attempts">0</strong>
+          </article>
+        </section>
+
+        <section class="play-card">
+          <div class="play-heading">
+            <div>
+              <p class="micro-label">Live Session</p>
+              <h2>Find the hidden number between 0 and 100</h2>
+            </div>
+            <div id="session-badge" class="session-badge">Ready</div>
+          </div>
+
+          <p id="status" class="status-line">
+            A new round is ready. Take your first guess.
+          </p>
+
+          <div class="range-card">
+            <div class="range-header">
+              <span>Live Range</span>
+              <span id="range-caption">0 to 100</span>
+            </div>
+            <div class="range-track">
+              <div id="active-range" class="range-active"></div>
+              <div id="last-marker" class="range-marker hidden"></div>
+            </div>
+            <div class="range-scale">
+              <span>0</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100</span>
+            </div>
+          </div>
+
+          <form id="guess-form" class="guess-form">
+            <label class="input-wrap" for="guess-input">
+              <span class="input-label">Your Guess</span>
+              <input id="guess-input" name="guess" type="number" min="0" max="100" placeholder="Enter a number" />
+            </label>
+            <button class="primary-button" type="submit">Submit Guess</button>
+          </form>
+
+          <div class="action-row">
+            <button id="smart-hint" class="secondary-button" type="button">
+              Smart Hint
+            </button>
+            <button id="restart-round" class="secondary-button alt" type="button">
+              Restart Round
             </button>
           </div>
 
-          <header class="hero-header">
-            <p class="kicker">Precision game, redesigned for feel.</p>
-            <h1>Guess The Number</h1>
-            <p class="lede">
-              A calm, high-feedback guessing experience with smoother motion,
-              cleaner flow, and clearer guidance.
-            </p>
-          </header>
+          <p class="helper-copy">
+            Press Enter to submit instantly. Feedback adapts to proximity and
+            tightens the range in real time.
+          </p>
+        </section>
+      </section>
 
-          <section class="stats-grid">
-            <article class="stat-card">
-              <span>Best Score</span>
-              <strong id="best-score">-</strong>
-            </article>
-            <article class="stat-card">
-              <span>Rounds Won</span>
-              <strong id="rounds-won">0</strong>
-            </article>
-            <article class="stat-card">
-              <span>Attempts</span>
-              <strong id="attempts">0</strong>
-            </article>
-          </section>
-
-          <section class="play-card">
-            <div class="play-heading">
-              <div>
-                <p class="micro-label">Live Session</p>
-                <h2>Find the hidden number between 0 and 100</h2>
-              </div>
-              <div id="session-badge" class="session-badge">Ready</div>
+      <aside class="side-stack reveal">
+        <section class="side-panel">
+          <p class="micro-label">Interaction Notes</p>
+          <h3>Designed to feel quicker and clearer</h3>
+          <div class="history-list">
+            <div class="empty-state">
+              Adaptive feedback updates the range, the status tone, and the
+              guess trail after every move.
             </div>
-
-            <p id="status" class="status-line">
-              A new round is ready. Take your first guess.
-            </p>
-
-            <div class="range-card">
-              <div class="range-header">
-                <span>Live Range</span>
-                <span id="range-caption">0 to 100</span>
-              </div>
-              <div class="range-track">
-                <div id="active-range" class="range-active"></div>
-                <div id="last-marker" class="range-marker hidden"></div>
-              </div>
-              <div class="range-scale">
-                <span>0</span>
-                <span>25</span>
-                <span>50</span>
-                <span>75</span>
-                <span>100</span>
-              </div>
+            <div class="empty-state">
+              Smart hints respond to your remaining search space instead of
+              offering generic advice.
             </div>
-
-            <form id="guess-form" class="guess-form">
-              <label class="input-wrap" for="guess-input">
-                <span class="input-label">Your Guess</span>
-                <input
-                  id="guess-input"
-                  name="guess"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="Enter a number"
-                />
-              </label>
-              <button class="primary-button" type="submit">Submit Guess</button>
-            </form>
-
-            <div class="action-row">
-              <button id="smart-hint" class="secondary-button" type="button">
-                Smart Hint
-              </button>
-              <button id="restart-round" class="secondary-button alt" type="button">
-                Restart Round
-              </button>
-            </div>
-
-            <p class="helper-copy">
-              Press Enter to submit instantly. Feedback adapts to proximity and
-              tightens the range in real time.
-            </p>
-          </section>
+          </div>
         </section>
 
-        <aside class="side-stack reveal">
-          <section class="side-panel">
-            <p class="micro-label">Interaction Notes</p>
-            <h3>Designed to feel quicker and clearer</h3>
-            <div class="history-list">
-              <div class="empty-state">
-                Adaptive feedback updates the range, the status tone, and the
-                guess trail after every move.
-              </div>
-              <div class="empty-state">
-                Smart hints respond to your remaining search space instead of
-                offering generic advice.
-              </div>
+        <section class="side-panel">
+          <p class="micro-label">Recent Guesses</p>
+          <h3>Guess history</h3>
+          <div id="history" class="history-list">
+            <div class="empty-state">
+              Your guesses will appear here with direction and proximity
+              feedback.
             </div>
-          </section>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
 
-          <section class="side-panel">
-            <p class="micro-label">Recent Guesses</p>
-            <h3>Guess history</h3>
-            <div id="history" class="history-list">
-              <div class="empty-state">
-                Your guesses will appear here with direction and proximity
-                feedback.
-              </div>
-            </div>
-          </section>
-        </aside>
-      </main>
-    </div>
+  <div id="toast" class="toast hidden"></div>
+  <div id="confetti" class="confetti-layer" aria-hidden="true"></div>
 
-    <div id="toast" class="toast hidden"></div>
-    <div id="confetti" class="confetti-layer" aria-hidden="true"></div>
+  <script src="script.js"></script>
+</body>
 
-    <script src="script.js"></script>
-  </body>
 </html>
