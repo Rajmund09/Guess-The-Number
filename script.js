@@ -169,11 +169,20 @@ function startNewRound() {
 }
 
 function showHint() {
+  if (state.solved) {
+    typeStatus("You already solved this round. Start a new one for a fresh challenge.", "success");
+    setBadge("Round Complete", "success");
+    return;
+  }
+
   const midpoint = Math.floor((state.lowerBound + state.upperBound) / 2);
-  typeStatus(
-    `Try working near ${midpoint}. Current range: ${state.lowerBound} to ${state.upperBound}.`,
-    "info",
-  );
+  const spread = state.upperBound - state.lowerBound;
+  const message =
+    spread <= 8
+      ? `The answer is cornered now. Focus between ${state.lowerBound} and ${state.upperBound}.`
+      : `Try working near ${midpoint}. Current range: ${state.lowerBound} to ${state.upperBound}.`;
+
+  typeStatus(message, "info");
   setBadge("Hint Active", "info");
 }
 
@@ -257,3 +266,4 @@ refs.restart.addEventListener("click", startNewRound);
 refs.newRoundTop.addEventListener("click", startNewRound);
 
 startNewRound();
+typeStatus("A new round is ready. Take your first guess.", "info");
