@@ -3,12 +3,96 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Guess The Number</title>
+    <title>Guess The Number | Premium Web Edition</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main>
-      <h1>Guess The Number</h1>
-      <p>A browser-based version of the game is loading here.</p>
+    <main class="app">
+      <section class="hero">
+        <header class="hero-header">
+          <p class="eyebrow">Premium Guessing Studio</p>
+          <h1>Guess The Number</h1>
+          <p class="lede">
+            A browser-first version of the game with cleaner structure and room
+            for smoother interactions.
+          </p>
+        </header>
+
+        <section class="stats-grid">
+          <article class="stat-card">
+            <span>Best Score</span>
+            <strong id="best-score">-</strong>
+          </article>
+          <article class="stat-card">
+            <span>Rounds Won</span>
+            <strong id="rounds-won">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Attempts</span>
+            <strong id="attempts">0</strong>
+          </article>
+        </section>
+
+        <section class="play-card">
+          <div class="play-heading">
+            <div>
+              <p class="micro-label">Live Session</p>
+              <h2>Find the hidden number between 0 and 100</h2>
+            </div>
+            <div id="session-badge" class="session-badge">Ready</div>
+          </div>
+
+          <p id="status" class="status-line">
+            A new round is ready. Take your first guess.
+          </p>
+
+          <div class="range-card">
+            <div class="range-header">
+              <span>Live Range</span>
+              <span id="range-caption">0 to 100</span>
+            </div>
+            <div class="range-track">
+              <div id="active-range" class="range-active"></div>
+              <div id="last-marker" class="range-marker hidden"></div>
+            </div>
+          </div>
+
+          <form id="guess-form" class="guess-form">
+            <label class="input-wrap" for="guess-input">
+              <span>Your Guess</span>
+              <input
+                id="guess-input"
+                name="guess"
+                type="number"
+                min="0"
+                max="100"
+                placeholder="Enter a number"
+              />
+            </label>
+            <button type="submit">Submit Guess</button>
+          </form>
+
+          <div class="action-row">
+            <button id="smart-hint" type="button">Smart Hint</button>
+            <button id="restart-round" type="button">Restart Round</button>
+          </div>
+        </section>
+      </section>
+
+      <aside class="side-stack">
+        <section class="side-panel">
+          <p class="micro-label">Recent Guesses</p>
+          <h3>Guess history</h3>
+          <div id="history" class="history-list">
+            <div class="empty-state">
+              Your guesses will appear here with direction and proximity
+              feedback.
+            </div>
+          </div>
+        </section>
+      </aside>
     </main>
+
+    <script src="script.js"></script>
   </body>
 </html>
