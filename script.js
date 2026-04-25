@@ -6,6 +6,8 @@ const state = {
   lowerBound: 0,
   upperBound: 100,
   solved: false,
+  statusTimer: null,
+  toastTimer: null,
 };
 
 const refs = {
@@ -22,6 +24,9 @@ const refs = {
   form: document.getElementById("guess-form"),
   smartHint: document.getElementById("smart-hint"),
   restart: document.getElementById("restart-round"),
+  newRoundTop: document.getElementById("new-round-top"),
+  toast: document.getElementById("toast"),
+  confetti: document.getElementById("confetti"),
 };
 
 function randomNumber(min, max) {
@@ -38,9 +43,67 @@ function proximityText(guess) {
   return "Way off right now.";
 }
 
-function setBadge(text, color) {
-  refs.badge.textContent = text;
+function setBadge(label, tone = "info") {
+  const toneMap = {
+    info: ["rgba(133, 240, 255, 0.1)", "#85f0ff", "rgba(133, 240, 255, 0.18)"],
+    success: ["rgba(154, 247, 190, 0.12)", "#9af7be", "rgba(154, 247, 190, 0.18)"],
+    warn: ["rgba(255, 209, 127, 0.12)", "#ffd17f", "rgba(255, 209, 127, 0.18)"],
+    error: ["rgba(255, 143, 164, 0.12)", "#ff8fa4", "rgba(255, 143, 164, 0.18)"],
+  };
+
+  const [bg, color, border] = toneMap[tone] || toneMap.info;
+  refs.badge.textContent = label;
+  refs.badge.style.background = bg;
   refs.badge.style.color = color;
+  refs.badge.style.borderColor = border;
+}
+
+function typeStatus(message, tone = "info") {
+  const colorMap = {
+    info: "#85f0ff",
+    success: "#9af7be",
+    warn: "#ffd17f",
+    error: "#ff8fa4",
+  };
+
+  if (state.statusTimer) {
+    clearInterval(state.statusTimer);
+  }
+
+  refs.status.style.color = colorMap[tone] || "#eef3fb";
+  refs.status.textContent = "";
+
+  let index = 0;
+  state.statusTimer = window.setInterval(() => {
+    refs.status.textContent = message.slice(0, index);
+    index += 1;
+    if (index > message.length) {
+      clearInterval(state.statusTimer);
+      state.statusTimer = null;
+    }
+  }, 12);
+}
+
+function showToast(message, tone = "info") {
+  const colorMap = {
+    info: "#85f0ff",
+    success: "#9af7be",
+    warn: "#ffd17f",
+    error: "#ff8fa4",
+  };
+
+  refs.toast.textContent = message;
+  refs.toast.style.color = colorMap[tone] || "#eef3fb";
+  refs.toast.classList.remove("hidden");
+  refs.toast.classList.add("visible");
+
+  if (state.toastTimer) {
+    clearTimeout(state.toastTimer);
+  }
+
+  state.toastTimer = window.setTimeout(() => {
+    refs.toast.classList.remove("visible");
+  }, 2400);
 }
 
 function updateStats() {
@@ -97,9 +160,9 @@ function startNewRound() {
 
   refs.form.reset();
   refs.input.focus();
-  refs.status.textContent =
-    "New round started. The number is hidden somewhere between 0 and 100.";
-  setBadge("Fresh Round", "#85f0ff");
+  typeStatus("New round started. The number is hidden somewhere between 0 and 100.", "info");
+  showToast("Fresh round ready.", "info");
+  setBadge("Fresh Round", "info");
   updateStats();
   updateRange();
   renderHistory();
@@ -107,15 +170,38 @@ function startNewRound() {
 
 function showHint() {
   const midpoint = Math.floor((state.lowerBound + state.upperBound) / 2);
-  refs.status.textContent = `Try working near ${midpoint}. Current range: ${state.lowerBound} to ${state.upperBound}.`;
-  setBadge("Hint Active", "#85f0ff");
+  typeStatus(
+    `Try working near ${midpoint}. Current range: ${state.lowerBound} to ${state.upperBound}.`,
+    "info",
+  );
+  setBadge("Hint Active", "info");
+}
+
+function launchConfetti() {
+  refs.confetti.innerHTML = "";
+  const colors = ["#85f0ff", "#78a6ff", "#9af7be", "#ffd17f", "#ffffff"];
+
+  for (let index = 0; index < 42; index += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti";
+    piece.style.left = `${randomNumber(4, 96)}vw`;
+    piece.style.background = colors[randomNumber(0, colors.length - 1)];
+    piece.style.animationDuration = `${randomNumber(1800, 3200)}ms`;
+    piece.style.animationDelay = `${randomNumber(0, 240)}ms`;
+    piece.style.setProperty("--drift", `${randomNumber(-160, 160)}px`);
+    refs.confetti.appendChild(piece);
+  }
+
+  window.setTimeout(() => {
+    refs.confetti.innerHTML = "";
+  }, 3500);
 }
 
 function handleGuess(event) {
   event.preventDefault();
 
   if (state.solved) {
-    refs.status.textContent = "This round is solved. Start a new round to keep playing.";
+    typeStatus("This round is solved. Start a new round to keep playing.", "success");
     return;
   }
 
@@ -123,14 +209,16 @@ function handleGuess(event) {
   const guess = Number(raw);
 
   if (!raw || !Number.isInteger(guess) || guess < 0 || guess > 100) {
-    refs.status.textContent = "Enter a whole number between 0 and 100.";
-    setBadge("Invalid Input", "#ff8fa4");
+    typeStatus("Enter a whole number between 0 and 100.", "error");
+    showToast("Whole numbers only, from 0 to 100.", "error");
+    setBadge("Invalid Input", "error");
     return;
   }
 
   if (state.guesses.includes(guess)) {
-    refs.status.textContent = `You already tried ${guess}. Pick a new number.`;
-    setBadge("Repeated Guess", "#ffd17f");
+    typeStatus(`You already tried ${guess}. Pick a new number.`, "warn");
+    showToast("Try a fresh number.", "warn");
+    setBadge("Repeated Guess", "warn");
     return;
   }
 
@@ -138,20 +226,22 @@ function handleGuess(event) {
 
   if (guess < state.target) {
     state.lowerBound = Math.max(state.lowerBound, guess + 1);
-    refs.status.textContent = `${guess} is low. Move higher. ${proximityText(guess)}`;
-    setBadge("Go Higher", "#85f0ff");
+    typeStatus(`${guess} is low. Move higher. ${proximityText(guess)}`, "info");
+    setBadge("Go Higher", "info");
   } else if (guess > state.target) {
     state.upperBound = Math.min(state.upperBound, guess - 1);
-    refs.status.textContent = `${guess} is high. Pull lower. ${proximityText(guess)}`;
-    setBadge("Go Lower", "#85f0ff");
+    typeStatus(`${guess} is high. Pull lower. ${proximityText(guess)}`, "info");
+    setBadge("Go Lower", "info");
   } else {
     state.solved = true;
     state.roundsWon += 1;
     if (state.bestScore === null || state.guesses.length < state.bestScore) {
       state.bestScore = state.guesses.length;
     }
-    refs.status.textContent = `Locked in. You found ${state.target} in ${state.guesses.length} attempts.`;
-    setBadge("Solved", "#9af7be");
+    typeStatus(`Locked in. You found ${state.target} in ${state.guesses.length} attempts.`, "success");
+    showToast("Round solved beautifully.", "success");
+    setBadge("Solved", "success");
+    launchConfetti();
   }
 
   refs.form.reset();
@@ -164,5 +254,6 @@ function handleGuess(event) {
 refs.form.addEventListener("submit", handleGuess);
 refs.smartHint.addEventListener("click", showHint);
 refs.restart.addEventListener("click", startNewRound);
+refs.newRoundTop.addEventListener("click", startNewRound);
 
 startNewRound();
